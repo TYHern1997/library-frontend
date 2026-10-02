@@ -1,0 +1,23 @@
+:root {
+  --bs-body-bg: #F5F0E6;
+  --bs-body-color: #2B2118;
+  --bs-primary: #6B2737;
+  --bs-primary-rgb: 107, 39, 55;
+  --bs-border-color: #C9BBA8;
+}
+
+.btn-primary {
+  background-color: #df96a7;
+  border-color: #6B2737;
+  color: black;
+}
+
+.btn-primary:hover {
+  background-color: #6B2737;
+  border-color: #6B2737;
+  color: #ffffff;
+}
+
+.navbar {
+  background-color: #EDE4D3;
+}
