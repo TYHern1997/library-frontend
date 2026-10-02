@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Table, Form, Button, Row, Col, } from 'react-bootstrap';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
+import { jwtDecode } from 'jwt-decode'
 
 const API = 'http://localhost:5000';
+
+
 
 export default function HomePage() {
   const [books, setBooks] = useState([]);
@@ -13,6 +16,9 @@ export default function HomePage() {
   const [category, setCategory] = useState('');
   const [year, setYear] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const token = localStorage.getItem('token');
+  const user = token ? jwtDecode(token) : null;
+
 
   const fetchBooks = async (query = '') => {
     try {
@@ -52,6 +58,28 @@ export default function HomePage() {
     }
   };
 
+  const handleBorrow = async (bookId) => {
+    try {
+      await axios.post(`${API}/borrows/${bookId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchBooks();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to borrow book');
+    }
+  };
+
+  const handleReturn = async (bookId) => {
+    try {
+      await axios.put(`${API}/borrows/${bookId}/return`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchBooks();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to return book');
+    }
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     fetchBooks(search);
@@ -72,45 +100,49 @@ export default function HomePage() {
     <Container className="my-5">
       <h2 className="mb-4">Book Collection</h2>
 
+
       {/* Add / Edit form — same form handles both, editingId decides which */}
-      <Form onSubmit={handleSubmit} className="mb-4">
-        <Row className="g-2 align-items-end">
-          <Col sm={3}>
-            <Form.Control
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title" required />
-          </Col>
-          <Col sm={3}>
-            <Form.Control
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              placeholder="Author"
-              required
-            />
-          </Col>
-          <Col sm={2}>
-            <Form.Control
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Category"
-            />
-          </Col>
-          <Col sm={2}>
-            <Form.Control
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              placeholder="Year"
-              required
-            />
-          </Col>
-          <Col sm={2}>
-            <Button type="submit" variant="primary" className="w-100">
-              {editingId ? 'Update Book' : 'Add Book'}
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+      {user?.role === 'admin' && (
+        <Form onSubmit={handleSubmit} className="mb-4">
+          <Row className="g-2 align-items-end">
+            <Col sm={3}>
+              <Form.Control
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title" required />
+            </Col>
+            <Col sm={3}>
+              <Form.Control
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                placeholder="Author"
+                required
+              />
+            </Col>
+            <Col sm={2}>
+              <Form.Control
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Category"
+              />
+            </Col>
+            <Col sm={2}>
+              <Form.Control
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                placeholder="Year"
+                required
+              />
+            </Col>
+            <Col sm={2}>
+              <Button type="submit" variant="primary" className="w-100">
+                {editingId ? 'Update Book' : 'Add Book'}
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      )}
+
 
       {/* Search bar — separate form, calls fetchBooks with the query */}
       <Form onSubmit={handleSearch} className="mb-4">
@@ -151,21 +183,34 @@ export default function HomePage() {
               <td>{book.year}</td>
               <td>{book.status}</td>
               <td>
-                <Button
-                  size="sm"
-                  variant="outline-primary"
-                  className="me-2"
-                  onClick={() => handleEdit(book)}
-                >
-                  <PencilSquare />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline-danger"
-                  onClick={() => handleDelete(book.id)}
-                >
-                  <Trash />
-                </Button>
+                {user?.role === 'admin' ? (
+                  <>
+                    <Button size="sm" variant="outline-primary" className="me-2" onClick={() => handleEdit(book)}>
+                      <PencilSquare />
+                    </Button>
+                    <Button size="sm" variant="outline-danger" onClick={() => handleDelete(book.id)}>
+                      <Trash />
+                    </Button>
+                  </>
+                ) : user ? (
+                  book.status === 'Available' ? (
+                    <Button size="sm" variant="outline-primary" onClick={() => handleBorrow(book.id)}>
+                      Borrow
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline-secondary" onClick={() => handleReturn(book.id)}>
+                      Return
+                    </Button>
+                  )
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline-primary"
+                    onClick={() => alert('Please log in to borrow books.')}
+                  >
+                    Borrow
+                  </Button>
+                )}
               </td>
             </tr>
           ))}
