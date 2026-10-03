@@ -18,6 +18,7 @@ export default function HomePage() {
   const [editingId, setEditingId] = useState(null);
   const token = localStorage.getItem('token');
   const user = token ? jwtDecode(token) : null;
+  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
 
 
   const fetchBooks = async (query = '') => {
@@ -37,10 +38,10 @@ export default function HomePage() {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`${API}/books/${editingId}`, { title, author, category, year });
+        await axios.put(`${API}/books/${editingId}`, { title, author, category, year }, authHeaders);
         setEditingId(null);
       } else {
-        await axios.post(`${API}/books`, { title, author, category, year });
+        await axios.post(`${API}/books`, { title, author, category, year }, authHeaders);
       }
       setTitle(''); setAuthor(''); setCategory(''); setYear('');
       fetchBooks();
@@ -51,7 +52,7 @@ export default function HomePage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this book?')) return;
     try {
-      await axios.delete(`${API}/books/${id}`);
+      await axios.delete(`${API}/books/${id}`, authHeaders);
       fetchBooks();
     } catch (err) {
       console.error(err);
@@ -95,8 +96,6 @@ export default function HomePage() {
     setYear(book.year);
   };
   return (
-
-
     <Container className="my-5">
       <h2 className="mb-4">Book Collection</h2>
 
