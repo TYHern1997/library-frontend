@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import AuthPage from './pages/AuthPage';
-import NavBar from './components/NavBar';
-import UsersPage from './pages/UsersPage';
+import HomePage from './pages/homepage';
+import AuthPage from './pages/authpage';
+import NavBar from './components/navbar';
+import UsersPage from './pages/userspage';
 import ProfilePage from './pages/profilepage';
 
 
