@@ -51,11 +51,11 @@ export default function AuthPage() {
                         <Form.Control value={name} onChange={(e) => setName(e.target.value)} required />
                     </Form.Group>
                 )}
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3" controlId="emailField">
                     <Form.Label>Email</Form.Label>
                     <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </Form.Group>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3" controlId="passwordField">
                     <Form.Label>Password</Form.Label>
                     <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </Form.Group>
