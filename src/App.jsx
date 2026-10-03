@@ -3,7 +3,7 @@ import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import NavBar from './components/NavBar';
 import UsersPage from './pages/UsersPage';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './pages/profilepage';
 
 
 
