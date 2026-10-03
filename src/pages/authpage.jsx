@@ -5,7 +5,7 @@ import { Form, Button, Container, Alert } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
-const API = 'http://localhost:5000';
+const API = 'https://library-backend-huqa.onrender.com';
 
 export default function AuthPage() {
     const location = useLocation();
