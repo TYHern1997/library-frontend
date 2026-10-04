@@ -13,7 +13,7 @@ export default function NavBar() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        navigate('/');
+        window.location.href = '/';
     };
     return (
         <Navbar expand="lg" className="shadow-sm">
